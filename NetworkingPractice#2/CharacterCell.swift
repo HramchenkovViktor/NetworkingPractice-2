@@ -74,6 +74,20 @@ final class CharacterCell: UICollectionViewCell {
         Рост: \(character.height) см
         Вес: \(character.mass) кг
         """
+
+        switch character.name {
+        case "Luke Skywalker":
+            characterImageView.image = UIImage(named: "luke")
+
+        case "Darth Vader":
+            characterImageView.image = UIImage(named: "vader")
+
+        case "C-3PO":
+            characterImageView.image = UIImage(named: "c3po")
+
+        default:
+            characterImageView.image = UIImage(systemName: "person.fill")
+        }
     }
 
 
