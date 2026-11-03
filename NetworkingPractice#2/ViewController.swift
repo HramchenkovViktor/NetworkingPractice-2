@@ -29,6 +29,8 @@ class ViewController: UIViewController {
         return collectionView
     }()
     
+    private var characters: [StarWarsCharacter] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,6 +48,14 @@ class ViewController: UIViewController {
         
   //      view.addSubview(characterStackView)
         view.addSubview(characterCollectionView)
+        
+        characterCollectionView.delegate = self
+        characterCollectionView.dataSource = self
+        
+        characterCollectionView.register(
+            CharacterCell.self,
+            forCellWithReuseIdentifier: CharacterCell.reuseIdentifier
+        )
     }
     
     private func setupConstreints() {
@@ -80,6 +90,10 @@ class ViewController: UIViewController {
             for character in characters {
                 print(character.name)
             }
+            await MainActor.run {
+                self.characters = characters
+                self.characterCollectionView.reloadData()
+            }
       
 
         } catch {
@@ -88,4 +102,41 @@ class ViewController: UIViewController {
 
         }
     }
+}
+
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return characters.count
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CharacterCell.reuseIdentifier,
+            for: indexPath
+        ) as? CharacterCell else {
+            return UICollectionViewCell()
+        }
+
+        let character = characters[indexPath.item]
+
+        cell.configure(with: character)
+
+        return cell
+    }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+
+        let spacing: CGFloat = 12
+        let width = (collectionView.bounds.width - spacing) / 2
+
+        return CGSize(width: width, height: 290)
+    }
+    
 }
