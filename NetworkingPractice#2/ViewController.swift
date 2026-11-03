@@ -30,11 +30,37 @@ class ViewController: UIViewController {
         return label
     }()
     
+    private let characterStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.alignment = .leading
+        
+        return stackView
+    } ()
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupUI()
+        setupConstreints()
+        
         Task {
             await loadCharacter()
+        }
+         func setupUI() {
+            view.backgroundColor = .systemBackground
+             
+             characterStackView.addArrangedSubview(nameLabel)
+             characterStackView.addArrangedSubview(heightLabel)
+             characterStackView.addArrangedSubview(massLabel)
+             characterStackView.addArrangedSubview(genderLabel)
+             view.addSubview(characterStackView)
+        }
+         func setupConstreints() {
+            
         }
     }
 
