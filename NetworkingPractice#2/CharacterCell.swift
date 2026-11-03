@@ -10,6 +10,12 @@ import SnapKit
 
 final class CharacterCell: UICollectionViewCell {
     
+    private let characterImages: [String: String] = [
+        "Luke Skywalker": "luke",
+        "Darth Vader": "vader",
+        "C-3PO": "c3po"
+    ]
+    
     static let reuseIdentifier = "CharacterCell"
     
     private let characterImageView: UIImageView = {
@@ -75,17 +81,11 @@ final class CharacterCell: UICollectionViewCell {
         Вес: \(character.mass) кг
         """
 
-        switch character.name {
-        case "Luke Skywalker":
-            characterImageView.image = UIImage(named: "luke")
+        let imageName = characterImages[character.name]
 
-        case "Darth Vader":
-            characterImageView.image = UIImage(named: "vader")
-
-        case "C-3PO":
-            characterImageView.image = UIImage(named: "c3po")
-
-        default:
+        if let imageName = imageName {
+            characterImageView.image = UIImage(named: imageName)
+        } else {
             characterImageView.image = UIImage(systemName: "person.fill")
         }
     }
