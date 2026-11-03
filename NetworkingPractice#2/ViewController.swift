@@ -11,36 +11,22 @@ import SnapKit
 
 class ViewController: UIViewController {
     
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Загрузка..."
-        return label
-    }()
+
     
-    private let heightLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Загрузка..."
-        return label
-    }()
-    
-    private let massLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Загрузка..."
-        return label
-    }()
-    
-    private let genderLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Загрузка..."
-        return label
-    }()
-    
-    private let characterStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.alignment = .leading
-        return stackView
+    private let characterCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 12
+        layout.minimumLineSpacing = 16
+
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
+
+        collectionView.backgroundColor = .clear
+
+        return collectionView
     }()
     
     override func viewDidLoad() {
@@ -56,27 +42,22 @@ class ViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
+
         
-        characterStackView.addArrangedSubview(nameLabel)
-        characterStackView.addArrangedSubview(heightLabel)
-        characterStackView.addArrangedSubview(massLabel)
-        characterStackView.addArrangedSubview(genderLabel)
-        
-        view.addSubview(characterStackView)
+  //      view.addSubview(characterStackView)
+        view.addSubview(characterCollectionView)
     }
     
     private func setupConstreints() {
-        
-        characterStackView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
-            $0.leading.trailing.equalToSuperview().inset(20)
+        characterCollectionView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
-        
-        
     }
     
     private func loadCharacter() async {
-        guard let url = URL(string: "https://swapi.info/api/people/1") else {
+        guard let url = URL(string: "https://swapi.info/api/people") else {
             print("Неверный URL")
             return
         }
@@ -94,30 +75,17 @@ class ViewController: UIViewController {
                 return
             }
             
-            let character = try JSONDecoder().decode(StarWarsCharacter.self, from: data)
-            await MainActor.run {
-                nameLabel.text = "Имя: \(character.name)"
-                heightLabel.text = "Рост: \(character.height) см"
-                massLabel.text = "Вес: \(character.mass) кг"
-                genderLabel.text = "Пол: \(character.gender)"
-                
+            let characters = try JSONDecoder().decode([StarWarsCharacter].self, from: data)
+            
+            for character in characters {
+                print(character.name)
             }
-            
-            
-            print("Имя персонажа: \(character.name)")
-            print("рост: \(character.height)")
-            print("вес: \(character.mass)")
-            print("пол: \(character.gender)")
-            
+      
+
         } catch {
             print(error)
 
-            await MainActor.run {
-                nameLabel.text = "Ошибка загрузки персонажа"
-                heightLabel.text = "Ошибка загрузки персонажа"
-                massLabel.text = "Ошибка загрузки персонажа"
-                genderLabel.text = "Ошибка загрузки персонажа"
-            }
+
         }
     }
 }
